@@ -1,4 +1,4 @@
-import { Octokit, App, OAuthApp } from "../src";
+import { Octokit, App, OAuthApp, RequestError } from "../src/index.ts";
 
 describe("Smoke tests", () => {
   it("Octokit is a function", () => {
@@ -19,7 +19,7 @@ describe("Smoke tests", () => {
         new App({
           appId: 123,
           privateKey: "private key here",
-        })
+        }),
     ).not.toThrow();
   });
 
@@ -40,7 +40,7 @@ describe("Smoke tests", () => {
         new OAuthApp({
           clientId: "",
           clientSecret: "",
-        })
+        }),
     ).not.toThrow();
   });
 
@@ -52,5 +52,17 @@ describe("Smoke tests", () => {
     });
 
     expect(app.octokit.request).toBeInstanceOf(Function);
+  });
+
+  it("RequestError inherits from Error", () => {
+    const error = new RequestError("test", 123, {
+      request: {
+        method: "GET",
+        url: "https://api.github.com/",
+        headers: {},
+      },
+    });
+
+    expect(error).toBeInstanceOf(RequestError);
   });
 });
